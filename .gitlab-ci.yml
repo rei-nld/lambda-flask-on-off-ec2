@@ -1,0 +1,22 @@
+variables:
+  PYTHON_IMAGE: "python:3.12.3-alpine"
+  DEPLOYMENT_PACKAGE: $CI_PROJECT_DIR/zip
+  PYTHON_SRC: $CI_PROJECT_DIR/src/python/
+
+stages:
+  - package
+
+build:
+  stage: package
+  image: $PYTHON_IMAGE
+  script:
+    - env
+    - apk add zip
+    - mkdir -p $DEPLOYMENT_PACKAGE
+    - cd $PYTHON_SRC && ls
+    - python3 -m pip install -r requirements.txt --target .
+    - zip -r dependencies.zip .
+    - cp dependencies.zip $DEPLOYMENT_PACKAGE/
+  artifacts:
+    paths:
+      - $DEPLOYMENT_PACKAGE
